@@ -30,11 +30,10 @@ const storeFruitToFruitStorage = {
       } else {
         throw new Error(`Amount is greater than the limit.`);
       }
-    } catch {
-      console
-        .log("")(await session)
-        .abortTransaction();
+    } catch (err) {
+      (await session).abortTransaction();
       (await session).endSession();
+      throw new Error(err);
     } finally {
       createInCollection(name);
       (await session).endSession();

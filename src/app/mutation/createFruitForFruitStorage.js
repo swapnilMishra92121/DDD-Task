@@ -24,11 +24,10 @@ const createFruitForFruitStorage = {
         description: create.description,
         limit: create.limit,
       };
-    } catch {
-      console
-        .log("")(await session)
-        .abortTransaction();
+    } catch(err) {
+      (await session).abortTransaction();
       (await session).endSession();
+      throw new Error(err);
     } finally {
       createInCollection(name);
       (await session).endSession();
