@@ -39,6 +39,7 @@ const removeFruitFromFruitStorage = {
         .abortTransaction();
       (await session).endSession();
     } finally {
+      (await session).commitTransaction();
       deleteInCollection(name);
       (await session).endSession();
     }

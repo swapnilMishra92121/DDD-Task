@@ -3,6 +3,7 @@ const Fruits_DB = require("../../../db/model/FruitSchema_DB");
 const { updateFruitValidation } = require("../service/FruitService");
 const { updateFruitByName } = require("../Repository/FruitRepository");
 const { updateInCollection } = require("../service/Helper");
+const mongoose = require("mongoose");
 
 const updateFruitForFruitStorage = {
   type: "Fruit",
@@ -12,19 +13,37 @@ const updateFruitForFruitStorage = {
     limit: intArg(),
   },
   async resolve(p, { name, description, limit }) {
-    updateFruitValidation(description, limit);
+    const session = mongoose.startSession();
+    (await session).startTransaction();
+    try {
+      updateFruitValidation(description, limit);
 
-    const create = await updateFruitByName(name, description, limit, Fruits_DB)
+      const create = await updateFruitByName(
+        name,
+        description,
+        limit,
+        Fruits_DB
+      );
 
-    if (!create) {
-      throw new Error(`${name} is not present.`);
+      if (!create) {
+        throw new Error(`${name} is not present.`);
+      }
+      updateInCollection(name);
+      (await session).commitTransaction();
+      return {
+        name: create.name,
+        description: create.description,
+        limit: create.limit,
+      };
+    } catch {
+      console
+        .log("")(await session)
+        .abortTransaction();
+      (await session).endSession();
+    } finally {
+      updateInCollection(name);
+      (await session).endSession();
     }
-    updateInCollection(name)
-    return {
-      name: create.name,
-      description: create.description,
-      limit: create.limit,
-    };
   },
 };
 
