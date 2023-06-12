@@ -1,50 +1,50 @@
-const { nonNull, stringArg, intArg } = require("nexus");
-const Fruits_DB = require("../../../db/model/FruitSchema_DB");
-const { updateFruitValidation } = require("../service/FruitService");
-const { updateFruitByName } = require("../Repository/FruitRepository");
-const { updateInCollection } = require("../service/Helper");
-const mongoose = require("mongoose");
+const { nonNull, stringArg, intArg } = require('nexus')
+const fruitsDB = require('../../../db/model/FruitSchema_DB')
+const { updateFruitValidation } = require('../service/FruitService')
+const { updateFruitByName } = require('../Repository/FruitRepository')
+const { updateInCollection } = require('../service/Helper')
+const mongoose = require('mongoose')
 
 const updateFruitForFruitStorage = {
-  type: "Fruit",
+  type: 'Fruit',
   args: {
     name: nonNull(stringArg()),
     description: stringArg(),
-    limit: intArg(),
+    limit: intArg()
   },
-  async resolve(p, { name, description, limit }) {
+  async resolve (p, { name, description, limit }) {
     const session = mongoose.startSession();
-    (await session).startTransaction();
+    (await session).startTransaction()
     try {
-      updateFruitValidation(description, limit);
+      updateFruitValidation(description, limit)
 
       const create = await updateFruitByName(
         name,
         description,
         limit,
-        Fruits_DB
-      );
+        fruitsDB
+      )
 
       if (!create) {
-        throw new Error(`${name} is not present.`);
+        throw new Error(`${name} is not present.`)
       }
       updateInCollection(name);
-      (await session).commitTransaction();
+      (await session).commitTransaction()
       return {
         name: create.name,
         description: create.description,
-        limit: create.limit,
-      };
+        limit: create.limit
+      }
     } catch {
       console
-        .log("")(await session)
+        .log('')(await session)
         .abortTransaction();
-      (await session).endSession();
+      (await session).endSession()
     } finally {
       updateInCollection(name);
-      (await session).endSession();
+      (await session).endSession()
     }
-  },
-};
+  }
+}
 
-module.exports = { updateFruitForFruitStorage };
+module.exports = { updateFruitForFruitStorage }

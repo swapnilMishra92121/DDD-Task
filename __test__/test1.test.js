@@ -1,10 +1,9 @@
-const axios = require('axios');
+const axios = require('axios')
 require('dotenv').config()
 
-const apiUrl = process.env.DOMAIN; 
+const apiUrl = process.env.DOMAIN
 
-//createFruitForFruitStorage
-
+// createFruitForFruitStorage
 
 test('creates a lemon fruit successfully', async () => {
   const query = `
@@ -15,12 +14,12 @@ test('creates a lemon fruit successfully', async () => {
         name
       }
     }
-  `;
-  const response = await axios.post(apiUrl, { query });
-  
+  `
+  const response = await axios.post(apiUrl, { query })
+
   if (response.data.errors) {
-    expect(response.data.errors).toBeDefined();
-    return;
+    expect(response.data.errors).toBeDefined()
+    return
   }
 
   expect(response.data).toMatchObject({
@@ -31,8 +30,8 @@ test('creates a lemon fruit successfully', async () => {
         name: 'lemon'
       }
     }
-  });
-});
+  })
+})
 
 test('fails to create a lemon fruit with a long description', async () => {
   const query = `
@@ -43,11 +42,11 @@ test('fails to create a lemon fruit with a long description', async () => {
         name
       }
     }
-  `;
-  const response = await axios.post(apiUrl, { query });
+  `
+  const response = await axios.post(apiUrl, { query })
 
-  expect(response.data.errors).toBeDefined();
-});
+  expect(response.data.errors).toBeDefined()
+})
 
 test('fails to create duplicate lemons', async () => {
   const query = `
@@ -58,12 +57,12 @@ test('fails to create duplicate lemons', async () => {
         name
       }
     }
-  `;
+  `
 
   try {
-    await axios.post(apiUrl, { query });
-    await axios.post(apiUrl, { query });
+    await axios.post(apiUrl, { query })
+    await axios.post(apiUrl, { query })
   } catch (error) {
-    expect(error.response.data.errors).toBeDefined();
+    expect(error.response.data.errors).toBeDefined()
   }
-});
+})

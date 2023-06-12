@@ -1,11 +1,9 @@
-const axios = require('axios');
+const axios = require('axios')
 require('dotenv').config()
 
-const apiUrl = process.env.DOMAIN; 
+const apiUrl = process.env.DOMAIN
 
-
-//storeFruitToFruitStorage
-
+// storeFruitToFruitStorage
 
 beforeAll(async () => {
   const seedQuery = `
@@ -15,9 +13,9 @@ beforeAll(async () => {
         name
       }
     }
-  `;
-  await axios.post(apiUrl, { query: seedQuery });
-});
+  `
+  await axios.post(apiUrl, { query: seedQuery })
+})
 
 test('stores 5 lemons to fruit storage successfully', async () => {
   const storeQuery = `
@@ -27,12 +25,12 @@ test('stores 5 lemons to fruit storage successfully', async () => {
         amount
       }
     }
-  `;
-  const response = await axios.post(apiUrl, { query: storeQuery });
+  `
+  const response = await axios.post(apiUrl, { query: storeQuery })
 
   if (response.data.errors) {
-    expect(response.data.errors).toBeDefined();
-    return;
+    expect(response.data.errors).toBeDefined()
+    return
   }
 
   expect(response.data).toMatchObject({
@@ -42,8 +40,8 @@ test('stores 5 lemons to fruit storage successfully', async () => {
         amount: 5
       }
     }
-  });
-});
+  })
+})
 
 test('fails to store 11 lemons to fruit storage', async () => {
   const storeQuery = `
@@ -53,8 +51,8 @@ test('fails to store 11 lemons to fruit storage', async () => {
         amount
       }
     }
-  `;
-  const response = await axios.post(apiUrl, { query: storeQuery });
+  `
+  const response = await axios.post(apiUrl, { query: storeQuery })
 
-  expect(response.data.errors).toBeDefined();
-});
+  expect(response.data.errors).toBeDefined()
+})

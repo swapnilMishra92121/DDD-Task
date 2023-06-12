@@ -1,28 +1,24 @@
-const { makeSchema  } = require('nexus');
-
+/* eslint-disable n/no-path-concat */
+const { makeSchema } = require('nexus')
 
 const {
+  FruitQuery,
+  Fruit,
+  FruitMutation,
+  subFruit
+} = require('../app/SchemaObject')
+
+const schema = makeSchema({
+  types: [
     FruitQuery,
     Fruit,
     FruitMutation,
     subFruit
-} = require("../app/SchemaObject");
-
-
-const schema = makeSchema({
-    types: [
-        FruitQuery,
-        Fruit,
-        FruitMutation,
-        subFruit
-    ],
-    outputs: {
-        schema: __dirname + '/schema.graphql',
-        typegen: __dirname + '/typings.ts',
-    },
-});
-
-
-
+  ],
+  outputs: {
+    schema: __dirname + '/schema.graphql',
+    typegen: __dirname + '/typings.ts'
+  }
+})
 
 module.exports = { schema }

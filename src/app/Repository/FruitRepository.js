@@ -1,26 +1,26 @@
-const createFruit = (name, description, limit, Fruits_DB) => {
-  return Fruits_DB.create({ name, description, limit });
-};
+const createFruit = (name, description, limit, fruitsDB) => {
+  return fruitsDB.create({ name, description, limit })
+}
 
-const findFruitByName = (name, Fruits_DB) => {
-  return Fruits_DB.findOne({ name });
-};
+const findFruitByName = (name, fruitsDB) => {
+  return fruitsDB.findOne({ name })
+}
 
-const removeFruitByName = (name, Fruits_DB) => {
-  return Fruits_DB.findOneAndRemove({ name });
-};
+const removeFruitByName = (name, fruitsDB) => {
+  return fruitsDB.findOneAndRemove({ name })
+}
 
-const updateFruitByName = (name, description, limit, Fruits_DB) => {
-  return Fruits_DB.findOneAndUpdate(
+const updateFruitByName = (name, description, limit, fruitsDB) => {
+  return fruitsDB.findOneAndUpdate(
     { name },
     { name, description, limit },
     { new: true }
-  );
-};
+  )
+}
 
 module.exports = {
   createFruit,
   findFruitByName,
   removeFruitByName,
-  updateFruitByName,
-};
+  updateFruitByName
+}

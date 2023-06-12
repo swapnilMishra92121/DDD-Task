@@ -1,44 +1,44 @@
-const { nonNull, stringArg, intArg } = require("nexus");
-const Fruits_DB = require("../../../db/model/FruitSchema_DB");
-const subFruits_DB = require("../../../db/model/subFruitsSchema_DB");
-const { storeFruitValidation } = require("../service/FruitStoreService");
-const { findFruitByName } = require("../Repository/FruitRepository");
-const { createFruit } = require("../Repository/FruitStoreRepository");
-const { createInCollection } = require("../service/Helper");
-const mongoose = require("mongoose");
+const { nonNull, stringArg, intArg } = require('nexus')
+const fruitsDB = require('../../../db/model/FruitSchema_DB')
+const subFruitsDB = require('../../../db/model/subFruitsSchema_DB')
+const { storeFruitValidation } = require('../service/FruitStoreService')
+const { findFruitByName } = require('../Repository/FruitRepository')
+const { createFruit } = require('../Repository/FruitStoreRepository')
+const { createInCollection } = require('../service/Helper')
+const mongoose = require('mongoose')
 
 const storeFruitToFruitStorage = {
-  type: "subFruit",
+  type: 'subFruit',
   args: {
     name: nonNull(stringArg()),
-    amount: nonNull(intArg()),
+    amount: nonNull(intArg())
   },
-  async resolve(_, { name, amount }) {
+  async resolve (_, { name, amount }) {
     const session = mongoose.startSession();
-    (await session).startTransaction();
+    (await session).startTransaction()
     try {
-      const fruit = await findFruitByName(name, Fruits_DB);
+      const fruit = await findFruitByName(name, fruitsDB)
 
-      storeFruitValidation(amount, fruit, name);
+      storeFruitValidation(amount, fruit, name)
 
-      const selectedFruit = fruit;
+      const selectedFruit = fruit
 
       if (selectedFruit.limit >= amount) {
-        const create = await createFruit(name, amount, subFruits_DB);
-        (await session).commitTransaction();
-        return { name: create.name, amount: create.amount };
+        const create = await createFruit(name, amount, subFruitsDB);
+        (await session).commitTransaction()
+        return { name: create.name, amount: create.amount }
       } else {
-        throw new Error(`Amount is greater than the limit.`);
+        throw new Error('Amount is greater than the limit.')
       }
     } catch (err) {
       (await session).abortTransaction();
-      (await session).endSession();
-      throw new Error(err);
+      (await session).endSession()
+      throw new Error(err)
     } finally {
       createInCollection(name);
-      (await session).endSession();
+      (await session).endSession()
     }
-  },
-};
+  }
+}
 
-module.exports = { storeFruitToFruitStorage };
+module.exports = { storeFruitToFruitStorage }

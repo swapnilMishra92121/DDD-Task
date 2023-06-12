@@ -1,10 +1,9 @@
-const axios = require('axios');
+const axios = require('axios')
 require('dotenv').config()
 
-const apiUrl = process.env.DOMAIN; 
+const apiUrl = process.env.DOMAIN
 
-
-//deleteFruitFromFruitStorage
+// deleteFruitFromFruitStorage
 
 beforeAll(async () => {
   const seedQuery = `
@@ -19,9 +18,9 @@ beforeAll(async () => {
         amount
       }
     }
-  `;
-  await axios.post(apiUrl, { query: seedQuery });
-});
+  `
+  await axios.post(apiUrl, { query: seedQuery })
+})
 
 test('fails to delete the lemon fruit from fruit storage without force delete', async () => {
   const deleteQuery = `
@@ -30,11 +29,11 @@ test('fails to delete the lemon fruit from fruit storage without force delete', 
         name
       }
     }
-  `;
-  const response = await axios.post(apiUrl, { query: deleteQuery });
+  `
+  const response = await axios.post(apiUrl, { query: deleteQuery })
 
-  expect(response.data.errors).toBeDefined();
-});
+  expect(response.data.errors).toBeDefined()
+})
 
 test('deletes the lemon fruit from fruit storage with force delete', async () => {
   const deleteQuery = `
@@ -43,8 +42,8 @@ test('deletes the lemon fruit from fruit storage with force delete', async () =>
         name
       }
     }
-  `;
-  const response = await axios.post(apiUrl, { query: deleteQuery });
+  `
+  const response = await axios.post(apiUrl, { query: deleteQuery })
 
   expect(response.data).toMatchObject({
     data: {
@@ -52,5 +51,5 @@ test('deletes the lemon fruit from fruit storage with force delete', async () =>
         name: 'lemon'
       }
     }
-  });
-});
+  })
+})

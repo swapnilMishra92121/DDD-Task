@@ -1,11 +1,9 @@
-const axios = require('axios');
+const axios = require('axios')
 require('dotenv').config()
 
-const apiUrl = process.env.DOMAIN; 
-
+const apiUrl = process.env.DOMAIN
 
 // removeFruitFromFruitStorage
-
 
 beforeAll(async () => {
   const seedQuery = `
@@ -20,9 +18,9 @@ beforeAll(async () => {
         amount
       }
     }
-  `;
-  await axios.post(apiUrl, { query: seedQuery });
-});
+  `
+  await axios.post(apiUrl, { query: seedQuery })
+})
 
 test('removes 5 lemons from fruit storage successfully', async () => {
   const removeQuery = `
@@ -32,8 +30,8 @@ test('removes 5 lemons from fruit storage successfully', async () => {
         amount
       }
     }
-  `;
-  const response = await axios.post(apiUrl, { query: removeQuery });
+  `
+  const response = await axios.post(apiUrl, { query: removeQuery })
 
   expect(response.data).toMatchObject({
     data: {
@@ -42,8 +40,8 @@ test('removes 5 lemons from fruit storage successfully', async () => {
         amount: 0
       }
     }
-  });
-});
+  })
+})
 
 test('fails to remove 6 lemons from fruit storage', async () => {
   const removeQuery = `
@@ -53,8 +51,8 @@ test('fails to remove 6 lemons from fruit storage', async () => {
         amount
       }
     }
-  `;
-  const response = await axios.post(apiUrl, { query: removeQuery });
+  `
+  const response = await axios.post(apiUrl, { query: removeQuery })
 
-  expect(response.data.errors).toBeDefined();
-});
+  expect(response.data.errors).toBeDefined()
+})

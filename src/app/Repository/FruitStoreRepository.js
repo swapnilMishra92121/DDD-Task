@@ -1,26 +1,26 @@
-const findFruitByName = (name, subFruits_DB) => {
-  return subFruits_DB.findOne({ name });
-};
+const findFruitByName = (name, subFruitsDB) => {
+  return subFruitsDB.findOne({ name })
+}
 
-const updateFruitByName = (name, subfruit, subFruits_DB) => {
-  return subFruits_DB.findOneAndUpdate(
+const updateFruitByName = (name, subfruit, subFruitsDB, amount) => {
+  return subFruitsDB.findOneAndUpdate(
     { name },
     { name, amount: subfruit.amount - amount },
     { new: true }
-  );
-};
+  )
+}
 
-const removeFruitByName = (name, subFruits_DB) => {
-  return subFruits_DB.findOneAndRemove({ name });
-};
+const removeFruitByName = (name, subFruitsDB) => {
+  return subFruitsDB.findOneAndRemove({ name })
+}
 
-const createFruit = (name, amount, subFruits_DB) => {
-  return subFruits_DB.create({ name, amount });
-};
+const createFruit = (name, amount, subFruitsDB) => {
+  return subFruitsDB.create({ name, amount })
+}
 
 module.exports = {
   findFruitByName,
   updateFruitByName,
   removeFruitByName,
-  createFruit,
-};
+  createFruit
+}
