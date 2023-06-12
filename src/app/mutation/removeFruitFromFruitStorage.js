@@ -7,6 +7,7 @@ const {
   removeFruitByName,
 } = require("../Repository/FruitStoreRepository");
 const { deleteInCollection } = require("../service/Helper");
+const mongoose = require("mongoose");
 
 const removeFruitFromFruitStorage = {
   type: "subFruit",
@@ -15,20 +16,33 @@ const removeFruitFromFruitStorage = {
     amount: nonNull(intArg()),
   },
   async resolve(p, { name, amount }) {
-    const subfruit = await findFruitByName(name, subFruits_DB);
-    removeFruitValidation(name, amount, subfruit);
-    if (amount > 0 && amount !== subfruit.amount) {
-      const updatedFruit = await updateFruitByName(
-        name,
-        subfruit,
-        subFruits_DB
-      );
-      return { name: updatedFruit.name, amount: updatedFruit.amount };
-    } else if (amount === subfruit.amount) {
-      const removedFruit = await removeFruitByName(name,subFruits_DB)
-      deleteInCollection(name)
-      return { name: removedFruit.name, amount: 0 };
+    const session = mongoose.startSession();
+    (await session).startTransaction();
+    try{
+      const subfruit = await findFruitByName(name, subFruits_DB);
+      removeFruitValidation(name, amount, subfruit);
+      if (amount > 0 && amount !== subfruit.amount) {
+        const updatedFruit = await updateFruitByName(
+          name,
+          subfruit,
+          subFruits_DB
+        );
+        (await session).commitTransaction();
+        return { name: updatedFruit.name, amount: updatedFruit.amount };
+      } else if (amount === subfruit.amount) {
+        const removedFruit = await removeFruitByName(name,subFruits_DB)
+        return { name: removedFruit.name, amount: 0 };
+      }
+    }catch {
+      console
+        .log("")(await session)
+        .abortTransaction();
+      (await session).endSession();
+    } finally {
+      deleteInCollection(name);
+      (await session).endSession();
     }
+    
   },
 };
 
