@@ -6,6 +6,7 @@ const {
   removeFruitByName,
 } = require("../Repository/FruitRepository");
 const { deleteInCollection } = require("../service/Helper");
+const mongoose = require("mongoose");
 
 const deleteFruitFromFruitStorage = {
   type: "Fruit",
@@ -14,15 +15,27 @@ const deleteFruitFromFruitStorage = {
     forceDelete: booleanArg(),
   },
   async resolve(p, { name, forceDelete }) {
-    const fruit = await findFruitByName(name, Fruits_DB);
-    deleteFruitValidation(name, fruit, forceDelete);
-    const remove = await removeFruitByName(name, Fruits_DB);
-    deleteInCollection(name)
-    return {
-      name: remove.name,
-      description: remove.description,
-      limit: remove.limit,
-    };
+    const session = mongoose.startSession();
+    (await session).startTransaction();
+    try {
+      const fruit = await findFruitByName(name, Fruits_DB);
+      deleteFruitValidation(name, fruit, forceDelete);
+      const remove = await removeFruitByName(name, Fruits_DB);
+      (await session).commitTransaction();
+      return {
+        name: remove.name,
+        description: remove.description,
+        limit: remove.limit,
+      };
+    } catch {
+      console
+        .log("")(await session)
+        .abortTransaction();
+      (await session).endSession();
+    } finally {
+      deleteInCollection(name);
+      (await session).endSession();
+    }
   },
 };
 
